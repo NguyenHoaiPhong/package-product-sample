@@ -1,0 +1,23 @@
+{
+    "name": "nhoma/package-product",
+    "description": "Create api product",
+    "keywords": [
+        "nhoma",
+        "laravel 5 package product"
+    ],
+    "authors": [
+        {
+            "name": "Phong",
+            "email": "nguyenhoaiphong0997@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Nhoma\\Product\\": "/"
+        }
+    },
+    "minimum-stability": "dev"
+}
