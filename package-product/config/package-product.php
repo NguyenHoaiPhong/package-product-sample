@@ -3,15 +3,15 @@ return [
 
     //Number of worlds
     'length' => [
-        'sample_name' => [
+        'name' => [
             'min' => 10,
             'max' => 255,
         ],
-        'sample_overview' => [
+        'overview' => [
             'min' => 10,
             'max' => 255,
         ],
-        'sample_description' => [
+        'description' => [
             'min' => 255,
             'max' => 0,//unlimit
         ],
@@ -27,7 +27,7 @@ return [
     |
     */
     'env' => 0,
-    'load_from' => 'package-sample::',
+    'load_from' => 'package-product::',
 
     /*
     |-----------------------------------------------------------------------

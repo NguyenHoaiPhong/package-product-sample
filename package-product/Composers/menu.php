@@ -11,53 +11,53 @@ use Foostart\Category\Helpers\FooCategory;
 |   $sidebar_items
 |   $sorting
 |   $order_by
-|   $plang_admin = 'sample-admin'
-|   $plang_front = 'sample-front'
+|   $plang_admin = 'product-admin'
+|   $plang_front = 'product-front'
 */
 View::composer([
-                'package-sample::admin.sample-edit',
-                'package-sample::admin.sample-form',
-                'package-sample::admin.sample-items',
-                'package-sample::admin.sample-item',
-                'package-sample::admin.sample-search',
-                'package-sample::admin.sample-config',
-                'package-sample::admin.sample-lang',
+                'package-product::admin.product-edit',
+                'package-product::admin.product-form',
+                'package-product::admin.product-items',
+                'package-product::admin.product-item',
+                'package-product::admin.product-search',
+                'package-product::admin.product-config',
+                'package-product::admin.product-lang',
     ], function ($view) {
 
         /**
          * $plang-admin
          * $plang-front
          */
-        $plang_admin = 'sample-admin';
-        $plang_front = 'sample-front';
+        $plang_admin = 'product-admin';
+        $plang_front = 'product-front';
 
         $view->with('plang_admin', $plang_admin);
         $view->with('plang_front', $plang_front);
 
         $fooCategory = new FooCategory();
-        $key = $fooCategory->getContextKeyByRef('admin/samples');
+        $key = $fooCategory->getContextKeyByRef('admin/products');
         /**
          * $sidebar_items
          */
         $view->with('sidebar_items', [
-            trans('sample-admin.sidebar.add') => [
-                'url' => URL::route('samples.edit', []),
+            trans('product-admin.sidebar.add') => [
+                'url' => URL::route('products.edit', []),
                 'icon' => '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>'
             ],
-            trans('sample-admin.sidebar.list') => [
-                "url" => URL::route('samples.list', []),
+            trans('product-admin.sidebar.list') => [
+                "url" => URL::route('products.list', []),
                 'icon' => '<i class="fa fa-list-ul" aria-hidden="true"></i>'
             ],
-            trans('sample-admin.sidebar.category') => [
+            trans('product-admin.sidebar.category') => [
                 'url'  => URL::route('categories.list',['_key='.$key]),
                 'icon' => '<i class="fa fa-sitemap" aria-hidden="true"></i>'
             ],
-            trans('sample-admin.sidebar.config') => [
-                "url" => URL::route('samples.config', []),
+            trans('product-admin.sidebar.config') => [
+                "url" => URL::route('products.config', []),
                 'icon' => '<i class="fa fa-braille" aria-hidden="true"></i>'
             ],
-            trans('sample-admin.sidebar.lang') => [
-                "url" => URL::route('samples.lang', []),
+            trans('product-admin.sidebar.lang') => [
+                "url" => URL::route('products.lang', []),
                 'icon' => '<i class="fa fa-language" aria-hidden="true"></i>'
             ],
         ]);
@@ -69,7 +69,7 @@ View::composer([
         $orders = [
             '' => trans($plang_admin.'.form.no-selected'),
             'id' => trans($plang_admin.'.fields.id'),
-            'sample_name' => trans($plang_admin.'.fields.name'),
+            'product_name' => trans($plang_admin.'.fields.name'),
             'updated_at' => trans($plang_admin.'.fields.updated_at'),
         ];
         $sorting = [

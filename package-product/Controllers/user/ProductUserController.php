@@ -1,6 +1,6 @@
 <?php
 
-namespace Foostart\Sample\Controlers\Admin;
+namespace Nhoma\Product\Controlers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use URL,
     Route,
     Redirect;
-use Foostart\Sample\Models\Samples;
+use Nhoma\Product\Models\Product;
 
-class SampleUserController extends Controller
+class ProductUserController extends Controller
 {
     public $data = array();
     public function __construct() {
@@ -20,13 +20,13 @@ class SampleUserController extends Controller
     public function index(Request $request)
     {
 
-        $obj_sample = new Samples();
-        $samples = $obj_sample->get_samples();
+        $obj_product = new Product();
+        $products = $obj_product->get_products();
         $this->data = array(
             'request' => $request,
-            'samples' => $samples
+            'products' => $products
         );
-        return view('sample::sample.index', $this->data);
+        return view('product::product.index', $this->data);
     }
 
 }

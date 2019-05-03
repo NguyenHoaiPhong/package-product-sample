@@ -108,28 +108,28 @@ class Product extends FooModel {
     }
 
     /**
-     * Get a sample by {id}
+     * Get a product by {id}
      * @param ARRAY $params list of parameters
-     * @return OBJECT sample
+     * @return OBJECT product
      */
     public function selectItem($params = array(), $key = NULL) {
-
 
         if (empty($key)) {
             $key = $this->primaryKey;
         }
+
        //join to another tables
         $elo = $this->joinTable();
 
         //search filters
-        $elo = $this->searchFilters($params, $elo, FALSE);
-
+        //$elo = $this->searchFilters($params, $elo, FALSE);
+        
         //select fields
         $elo = $this->createSelect($elo);
 
         //id
         $elo = $elo->where($this->primaryKey, $params['id']);
-
+       
         //first item
         $item = $elo->first();
 
@@ -154,9 +154,8 @@ class Product extends FooModel {
 
         //filter
         // dd($this->isValidFilters($params) || (!empty($params)));
-        if ( (!empty($params)))
+        if (!empty($params))
         {
-           
             foreach($params as $column => $value)
             {
                 if($this->isValidValue($value))
@@ -164,18 +163,19 @@ class Product extends FooModel {
                     switch($column)
                     {
                         case 'name':
+                        
                             if (!empty($value)) {
                                 $elo = $elo->where($this->table . '.name', '=', $value);
-                                
+                        
                             }
                             break;
                         case 'status':
                             if (!empty($value)) {
                                 $elo = $elo->where($this->table . '.'.$this->field_status, '=', $value);
+                                
                             }
                             break;
                         case 'keyword':
-                        // dd($this->table . '.name');
                             if (!empty($value)) {
                                 $elo = $elo->where(function($elo) use ($value) {
                                     $elo->where($this->table . '.name', 'LIKE', "%{$value}%")
@@ -190,11 +190,11 @@ class Product extends FooModel {
                 }
             }
         } elseif ($by_status) {
-            dd("ko co chay ");
             // $elo = $elo->where($this->table . '.'.$this->field_status, '=', $this->status['publish']);
-            // $elo = $elo->get()->toArray();
-            $products = $elo->get()->toArray();
-            dd($products);
+            
+            // $products = $elo->get()->toArray();
+            // return $products;
+            //dd($elo);
 
         }
 
@@ -237,22 +237,24 @@ class Product extends FooModel {
         if (empty($id)) {
             $id = $params['id'];
         }
+
         $field_status = $this->field_status;
 
-        $sample = $this->selectItem($params);
+        $product = $this->selectItem($params);
 
-        if (!empty($sample)) {
+        if (!empty($product)) {
+
             $dataFields = $this->getDataFields($params, $this->fields);
-
+         
             foreach ($dataFields as $key => $value) {
-                $sample->$key = $value;
+                $product->$key = $value;
             }
 
-            $sample->$field_status = $this->status['publish'];
+            $product->$field_status = $this->status['publish'];
 
-            $sample->save();
+            $product->save();
 
-            return $sample;
+            return $product;
         } else {
             return NULL;
         }
@@ -262,14 +264,13 @@ class Product extends FooModel {
     /**
      *
      * @param ARRAY $params list of parameters
-     * @return OBJECT sample
+     * @return OBJECT product
      */
     public function insertItem($params = []) {
 
         $dataFields = $this->getDataFields($params, $this->fields);
 
         $dataFields[$this->field_status] = $this->status['publish'];
-
 
         $item = self::create($dataFields);
 

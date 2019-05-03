@@ -2,11 +2,10 @@
 
 /*
 |-----------------------------------------------------------------------
-| SampleAdminController
+| ProductAdminController
 |-----------------------------------------------------------------------
-| @author: Kang
-| @website: http://foostart.com
-| @date: 28/12/2017
+| @author: Nhom A
+| @date: 2/5/2019
 |
 */
 
@@ -18,7 +17,7 @@ use Illuminate\Support\Facades\App;
 
 use Foostart\Category\Library\Controllers\FooController;
 use Foostart\Category\Models\Category;
-use Nhoma\Product\Validators\SampleValidator;
+use Nhoma\Product\Validators\ProductValidator;
 
 
 class ProductController extends FooController {
@@ -34,18 +33,18 @@ class ProductController extends FooController {
         $this->obj_category = new Category();
 
         // validators
-        $this->obj_validator = new SampleValidator();
+        $this->obj_validator = new ProductValidator();
 
         // set language files
-        $this->plang_admin = 'sample-admin';
-        $this->plang_front = 'sample-front';
+        $this->plang_admin = 'product-admin';
+        $this->plang_front = 'product-front';
 
         // package name
-        $this->package_name = 'package-sample';
-        $this->package_base_name = 'sample';
+        $this->package_name = 'package-product';
+        $this->package_base_name = 'product';
 
         // root routers
-        $this->root_router = 'samples';
+        $this->root_router = 'products';
 
         // page views
         $this->page_views = [
@@ -60,7 +59,7 @@ class ProductController extends FooController {
         $this->data_view['status'] = $this->obj_item->getPluckStatus();
 
         // //set category
-        $this->category_ref_name = 'admin/samples';
+        $this->category_ref_name = 'admin/products';
 
     }
 
@@ -71,11 +70,8 @@ class ProductController extends FooController {
      */
     public function index(Request $request) {
 
-        // $params = $request->all();
-        $params = [
-            'keyword'=>'product 1',
-        ];
-// dd($params);
+        $params = $request->all();
+       
         $items = $this->obj_item->selectItems($params);
 
         // display view
@@ -95,7 +91,6 @@ class ProductController extends FooController {
      * @date 26/12/2017
      */
     public function edit(Request $request) {
-
         $item = NULL;
         $categories = NULL;
 
@@ -139,61 +134,63 @@ class ProductController extends FooController {
     public function post(Request $request) {
 
         $item = NULL;
-
-        $params = array_merge($request->all(), $this->getUser());
-
+        //$params = array_merge($request->all(), $this->getUser());
+        $params = array_merge($request->all());
         $is_valid_request = $this->isValidRequest($request);
-
         $id = (int) $request->get('id');
 
         if ($is_valid_request && $this->obj_validator->validate($params)) {// valid data
 
             // update existing item
             if (!empty($id)) {
-
                 $item = $this->obj_item->find($id);
 
                 if (!empty($item)) {
 
                     $params['id'] = $id;
-                    $item = $this->obj_item->updateItem($params);
 
+                    $item = $this->obj_item->updateItem($params);
+        
                     // message
-                    return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
-                                    ->withMessage(trans($this->plang_admin.'.actions.edit-ok'));
+                    //return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
+                    //                ->withMessage(trans($this->plang_admin.'.actions.edit-ok'));
+                    return response()->json(['success' => 'Update success', 'status' => 201], 201);
                 } else {
 
                     // message
-                    return Redirect::route($this->root_router.'.list')
-                                    ->withMessage(trans($this->plang_admin.'.actions.edit-error'));
+                    //return Redirect::route($this->root_router.'.list')
+                    //               ->withMessage(trans($this->plang_admin.'.actions.edit-error'));
+                    return response()->json(['message' => 'Find not product', 'status' => 404], 404);
                 }
 
             // add new item
             } else {
-
                 $item = $this->obj_item->insertItem($params);
 
                 if (!empty($item)) {
 
                     //message
-                    return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
-                                    ->withMessage(trans($this->plang_admin.'.actions.add-ok'));
+                    //return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
+                    //                ->withMessage(trans($this->plang_admin.'.actions.add-ok'));
+                    return response()->json(['success' => 'create success', 'status' => 200], 200);
                 } else {
 
                     //message
-                    return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
-                                    ->withMessage(trans($this->plang_admin.'.actions.add-error'));
+                    //return Redirect::route($this->root_router.'.edit', ["id" => $item->id])
+                    //                ->withMessage(trans($this->plang_admin.'.actions.add-error'));
+                    return response()->json(['error' => $this->obj_validator->getErrors(), 'status' => 400], 400);
                 }
 
             }
 
         } else { // invalid data
 
-            $errors = $this->obj_validator->getErrors();
+            //$errors = $this->obj_validator->getErrors();
 
             // passing the id incase fails editing an already existing item
-            return Redirect::route($this->root_router.'.edit', $id ? ["id" => $id]: [])
-                    ->withInput()->withErrors($errors);
+            //return Redirect::route($this->root_router.'.edit', $id ? ["id" => $id]: [])
+            //        ->withInput()->withErrors($errors);
+            return response()->json(['error' => $this->obj_validator->getErrors(), 'status' => 400], 400);
         }
     }
 
@@ -206,8 +203,10 @@ class ProductController extends FooController {
 
         $item = NULL;
         $flag = TRUE;
-        $params = array_merge($request->all(), $this->getUser());
-        $delete_type = isset($params['del-forever'])?'delete-forever':'delete-trash';
+        //$params = array_merge($request->all(), $this->getUser());
+        $params = array_merge($request->all());
+        //$delete_type = isset($params['del-forever'])?'delete-forever':'delete-trash';
+        $delete_type = 'delete-forever';
         $id = (int)$request->get('id');
         $ids = $request->get('ids');
 
@@ -224,15 +223,17 @@ class ProductController extends FooController {
                 if (!$this->obj_item->deleteItem($params, $delete_type)) {
                     $flag = FALSE;
                 }
+                
             }
             if ($flag) {
-                return Redirect::route($this->root_router.'.list')
-                                ->withMessage(trans($this->plang_admin.'.actions.delete-ok'));
+                //return Redirect::route($this->root_router.'.list')
+                //                ->withMessage(trans($this->plang_admin.'.actions.delete-ok'));
+                return response()->json(['success' => 'delete success', 'status' => 204], 200);
             }
         }
-
-        return Redirect::route($this->root_router.'.list')
-                        ->withMessage(trans($this->plang_admin.'.actions.delete-error'));
+        return response()->json(['message' => 'Find not product', 'status' => 404], 404);
+        //return Redirect::route($this->root_router.'.list')
+        //                ->withMessage(trans($this->plang_admin.'.actions.delete-error'));
     }
 
     /**
@@ -243,8 +244,8 @@ class ProductController extends FooController {
     public function config(Request $request) {
         $is_valid_request = $this->isValidRequest($request);
         // display view
-        $config_path = realpath(base_path('config/package-sample.php'));
-        $package_path = realpath(base_path('vendor/foostart/package-sample'));
+        $config_path = realpath(base_path('config/package-product.php'));
+        $package_path = realpath(base_path('vendor/foostart/package-product'));
 
         $config_bakup = realpath($package_path.'/storage/backup/config');
 
@@ -259,7 +260,7 @@ class ProductController extends FooController {
         if ($request->isMethod('post') && $is_valid_request) {
 
             //create backup of current config
-            file_put_contents($config_bakup.'/package-sample-'.date('YmdHis',time()).'.php', $content);
+            file_put_contents($config_bakup.'/package-product-'.date('YmdHis',time()).'.php', $content);
 
             //update new config
             $content = $request->get('content');
@@ -287,16 +288,16 @@ class ProductController extends FooController {
     public function lang(Request $request) {
         $is_valid_request = $this->isValidRequest($request);
         // display view
-        $langs = config('package-sample.langs');
+        $langs = config('package-product.langs');
         $lang_paths = [];
 
         if (!empty($langs) && is_array($langs)) {
             foreach ($langs as $key => $value) {
-                $lang_paths[$key] = realpath(base_path('resources/lang/'.$key.'/sample-admin.php'));
+                $lang_paths[$key] = realpath(base_path('resources/lang/'.$key.'/product-admin.php'));
             }
         }
 
-        $package_path = realpath(base_path('vendor/foostart/package-sample'));
+        $package_path = realpath(base_path('vendor/foostart/package-product'));
 
         $lang_bakup = realpath($package_path.'/storage/backup/lang');
         $lang = $request->get('lang')?$request->get('lang'):'en';
@@ -325,8 +326,8 @@ class ProductController extends FooController {
             foreach ($lang_paths as $key => $value) {
                 $content = file_get_contents($value);
 
-                //format file name sample-admin-YmdHis.php
-                file_put_contents($lang_bakup.'/'.$key.'/sample-admin-'.date('YmdHis',time()).'.php', $content);
+                //format file name product-admin-YmdHis.php
+                file_put_contents($lang_bakup.'/'.$key.'/product-admin-'.date('YmdHis',time()).'.php', $content);
             }
 
 
